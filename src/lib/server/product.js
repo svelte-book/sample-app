@@ -1,8 +1,8 @@
-import { readFile } from 'fs/promises';
+import { database } from '$lib/server/mongodb';
 
 export async function loadProducts() {
-	const content = await readFile('data/products.json', { encoding: 'utf-8' });
-	return JSON.parse(content);
+	const products = await database.collection('products').find();
+	return await products.toArray();
 }
 
 export async function getRecommends(baseId) {
