@@ -3,13 +3,7 @@
 
 	export let data;
 
-	$: ({ product, relatedProducts } = data);
-
-	let cart = [];
-
-	function addToCart(productId) {
-		cart = [...cart, productId];
-	}
+	$:({ product, relatedProducts, cart } = data);
 </script>
 
 <header class="header">
@@ -38,7 +32,10 @@
 			</dl>
 			<div>
 				{#if !cart.includes(product.id)}
-					<button on:click={() => addToCart(product.id)}>カートに入れる</button>
+					<form method="POST">
+						<input type="hidden" name="productId" value={product.id} />
+						<button>カートに入れる</button>
+					</form>
 				{:else}
 					<button disabled>カート追加済み</button>
 				{/if}
