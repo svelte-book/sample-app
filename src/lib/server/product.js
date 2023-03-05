@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 
-async function loadProducts() {
+export async function loadProducts() {
 	const content = await readFile('data/products.json', { encoding: 'utf-8' });
 	return JSON.parse(content);
 }
