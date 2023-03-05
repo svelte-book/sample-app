@@ -1,24 +1,10 @@
-import { readFile, writeFile } from 'fs/promises';
-
-const dataPath = 'data/cart.json';
+import { database } from '$lib/server/mongodb';
 
 export async function addToCart(productId) {
-	const cart = await loadCart();
-	if (!cart.includes(productId)) {
-		cart.push(productId);
-	}
-	await writeFile(dataPath, JSON.stringify(cart), { encoding: 'utf-8' });
+	await database.collection('cart').insertOne({ productId });
 }
 
 export async function loadCart() {
-	try {
-		const content = await readFile(dataPath);
-		return JSON.parse(content);
-	} catch (err) {
-		if (err.code === 'ENOENT') {
-			return [];
-		} else {
-			throw err;
-		}
-	}
+	const cart = await database.collection('cart').find();
+	return await cart.map((doc) => doc.productId).toArray();
 }
