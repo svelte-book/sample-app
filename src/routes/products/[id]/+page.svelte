@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
+	import { enhance } from '$app/forms';
 	import Slider from './Slider.svelte';
 
 	export let data;
@@ -96,7 +97,16 @@
 			</dl>
 			<div>
 				{#if !cart.find((item) => item.id === product.id)}
-					<form method="POST" action="/cart?/add">
+					<form
+						method="POST"
+						action="/cart?/add"
+						use:enhance={() => {
+							return async ({ update }) => {
+								await update();
+								await loadCart();
+							};
+						}}
+					>
 						<input type="hidden" name="productId" value={product.id} />
 						{#await userRequest}
 							<button>カートに入れる</button>
