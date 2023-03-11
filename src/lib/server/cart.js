@@ -10,3 +10,7 @@ export async function loadCartItems(userId) {
 	const products = await database.collection('products').find({ _id: { $in: productIds } });
 	return await products.toArray();
 }
+
+export async function removeFormCart(userId, productId) {
+	await database.collection('cartItems').deleteOne({ userId, productId });
+}

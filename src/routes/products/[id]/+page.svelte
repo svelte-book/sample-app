@@ -1,12 +1,15 @@
 <script>
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
 	import Slider from './Slider.svelte';
 
 	export let data;
 
-	$:({ product, relatedProducts, cart } = data);
+	$:({ product, relatedProducts } = data);
 
+	let cart = [];
+	let cartOpen = false;
 	let recommendRequest = new Promise(() => {});
 	let userRequest = new Promise(() => {});
 
@@ -14,6 +17,18 @@
 		recommendRequest = fetch(`/api/recommend?id=${product.id}`).then((res) => res.json());
 		userRequest = fetch('/api/self').then((res) => res.json());
 	});
+
+	onMount(() => {
+		loadCart();
+	});
+
+	async function loadCart() {
+		cart = await fetch('/api/cart').then((res) => res.json());
+	}
+
+	function toggleCart() {
+		cartOpen = !cartOpen;
+	}
 </script>
 
 <svelte:head>
@@ -38,8 +53,30 @@
 					{/if}
 				{/await}
 			</li>
-			<li>
-				<a href="/cart">カート (0)</a>
+			<li class="cart">
+				<a href="/cart" on:click|preventDefault={toggleCart}>
+					カート
+					{#if cart.length > 0}
+						({cart.length})
+					{/if}
+				</a>
+				{#if cartOpen}
+					<div class="cart-detail">
+						{#if cart.length > 0}
+							<ul>
+								{#each cart as item}
+									<li>
+										<a href="/products/{item.id}">{item.name}</a>
+										- {item.price}円
+									</li>
+								{/each}
+							</ul>
+						{:else}
+							<div>カートは空です</div>
+						{/if}
+						<a href="/cart">詳細</a>
+					</div>
+				{/if}
 			</li>
 		</ul>
 	</nav>
@@ -59,7 +96,7 @@
 			</dl>
 			<div>
 				{#if !cart.find((item) => item.id === product.id)}
-					<form method="POST">
+					<form method="POST" action="/cart?/add">
 						<input type="hidden" name="productId" value={product.id} />
 						{#await userRequest}
 							<button>カートに入れる</button>
@@ -156,5 +193,19 @@
 		width: 100%;
 		max-width: 400px;
 		overflow: hidden;
+	}
+
+	.cart {
+		position: relative;
+	}
+
+	.cart-detail {
+		position: absolute;
+		right: 0;
+		top: 100%;
+		width: 250px;
+		padding: 10px;
+		background-color: #fff;
+		border: 1px solid gray;
 	}
 </style>
