@@ -143,7 +143,6 @@
 
 		<h3>関連商品</h3>
 		<ul>
-			<!-- ↓ <ul> の中を以下のように置き換え -->
 			{#each relatedProducts as product}
 				<li>
 					<a href="/products/{product.id}">{product.name}</a>
