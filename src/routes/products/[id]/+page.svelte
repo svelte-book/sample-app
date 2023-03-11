@@ -1,4 +1,5 @@
 <script>
+	import { page } from '$app/stores';
 	import { afterNavigate } from '$app/navigation';
 	import Slider from './Slider.svelte';
 
@@ -14,6 +15,14 @@
 		userRequest = fetch('/api/self').then((res) => res.json());
 	});
 </script>
+
+<svelte:head>
+	<meta name="twitter:card" content="summary" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url} />
+	<meta property="og:title" content={product.name} />
+	<meta property="og:description" content={`${product.name} - ${product.price}円`} />
+</svelte:head>
 
 <header class="header">
 	<a class="header-title" href="/">Svelte EC</a>
