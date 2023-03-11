@@ -7,9 +7,11 @@
 	$:({ product, relatedProducts, cart } = data);
 
 	let recommendRequest = new Promise(() => {});
+	let userRequest = new Promise(() => {});
 
 	afterNavigate(() => {
 		recommendRequest = fetch(`/api/recommend?id=${product.id}`).then((res) => res.json());
+		userRequest = fetch('/api/self').then((res) => res.json());
 	});
 </script>
 
@@ -17,7 +19,16 @@
 	<a class="header-title" href="/">Svelte EC</a>
 	<nav>
 		<ul class="header-links">
-			<li>ようこそゲストさん <a href="/login">ログイン</a></li>
+			<li>
+				ようこそ
+				{#await userRequest then user}
+					{#if user}
+						{user.email}さん <a href="/logout">ログアウト</a>
+					{:else}
+						ゲストさん <a href="/login">ログイン</a>
+					{/if}
+				{/await}
+			</li>
 			<li>
 				<a href="/cart">カート (0)</a>
 			</li>
