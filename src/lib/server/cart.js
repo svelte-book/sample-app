@@ -11,6 +11,6 @@ export async function loadCartItems(userId) {
 	return await products.toArray();
 }
 
-export async function removeFormCart(userId, productId) {
+export async function removeFromCart(userId, productId) {
 	await database.collection('cartItems').deleteOne({ userId, productId });
 }

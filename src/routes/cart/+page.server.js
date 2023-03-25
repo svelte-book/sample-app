@@ -1,4 +1,4 @@
-import { addToCart, loadCartItems, removeFormCart } from '$lib/server/cart';
+import { addToCart, loadCartItems, removeFromCart } from '$lib/server/cart';
 
 export async function load({ locals }) {
 	let cart = [];
@@ -18,7 +18,7 @@ export const actions = {
 	remove: async ({ locals, request }) => {
 		if (locals.currentUser) {
 			const data = await request.formData();
-			await removeFormCart(locals.currentUser.userId, data.get('productId'));
+			await removeFromCart(locals.currentUser.userId, data.get('productId'));
 		}
 	}
 };
